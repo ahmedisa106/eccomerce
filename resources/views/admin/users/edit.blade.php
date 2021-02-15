@@ -8,7 +8,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{aurl()}}">@lang('admin.home')</a></li>
 
-                    <li class="breadcrumb-item"><a href="{{aurl('admins/'.$admin->id.'/edit')}}">{{$admin->name}}</a></li>
+                    <li class="breadcrumb-item"><a href="{{aurl('users/'.$user->id.'/edit')}}">{{$user->name}}</a></li>
                     <li class="breadcrumb-item"><a href="#">{{trans($title)}}</a></li>
 
                 </ol>
@@ -27,7 +27,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">@lang('admin.admins')</h4>
+                            <h4 class="card-title">@lang('admin.users')</h4>
                             <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
                             <div class="heading-elements">
                                 <ul class="list-inline mb-0">
@@ -41,7 +41,7 @@
                         <div class="card-content collapse show">
 
                             <div class="card-body card-dashboard">
-                                <form class="form-horizontal" novalidate method="post" action="{{aurl('admins/'.$admin->id)}}">
+                                <form class="form-horizontal" novalidate method="post" action="{{aurl('users/'.$user->id)}}">
                                     {{csrf_field()}}
                                     {{method_field('put')}}
                                     <div class="row">
@@ -51,7 +51,7 @@
                                                     <span class="required">*</span>
                                                 </h4>
                                                 <div class="controls">
-                                                    <input type="text" name="name" value="{{$admin->name}}" class="form-control" required data-validation-required-message="{{trans('admin.name_required')}}">
+                                                    <input type="text" name="name" value="{{$user->name}}" class="form-control" required data-validation-required-message="{{trans('admin.name_required')}}">
                                                 </div>
 
                                             </div>
@@ -60,7 +60,7 @@
                                                     <span class="required">*</span>
                                                 </h4>
                                                 <div class="controls">
-                                                    <input type="email" name="email" value="{{$admin->email}}" class="form-control" required data-validation-required-message="{{trans('admin.email_required')}}">
+                                                    <input type="email" name="email" value="{{$user->email}}" class="form-control" required data-validation-required-message="{{trans('admin.email_required')}}">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -77,6 +77,20 @@
                                                 </h4>
                                                 <div class="controls">
                                                     <input type="password" name="password_confirmation" data-validation-match-match="password" class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <h4>@lang('admin.level')
+                                                    <span class="required">*</span>
+                                                </h4>
+                                                <div class="controls">
+                                                    <select class="form-control" name="level" id="level">
+                                                        <option value="">.........</option>
+                                                        <option value="user" {{$user->level =='user'?'selected':''}}>@lang('admin.user')</option>
+                                                        <option value="vendor" {{$user->level =='vendor'?'selected':''}}>@lang('admin.vendor')</option>
+                                                        <option value="company" {{$user->level =='company'?'selected':''}}>@lang('admin.company')</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div>

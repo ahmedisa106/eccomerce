@@ -2,31 +2,45 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Admin;
-use App\DataTables\AdminDataTable;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class AdminsController extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(AdminDataTable $dataTable)
+    public function index()
     {
+        if (\request()->has('level')) {
+            $level = \request('level');
+        } else {
+            $level = '';
+        }
+
+
         $title = 'admin.admin_Panel';
-        return view('admin.admins.index', compact('title'));
+        return view('admin.users.index', compact('title', 'level'));
     }
+
 
     public function dataTable()
     {
 
 
-        $admins = Admin::get();
-        return DataTables::of($admins)
+        if (\request()->has('level') && \request('level') != '') {
+            $users = User::where('level', \request('level'))->get();
+        } else {
+
+            $users = User::get();
+        }
+
+
+        return DataTables::of($users)
             ->addColumn('checkbox', function ($row) {
 
                 return '<input type="checkbox" name="item[]" class="item_checkbox" id="item_checkbox" value="' . $row->id . '">';
@@ -40,15 +54,24 @@ class AdminsController extends Controller
                 return $row->email;
 
             })
+            ->addColumn('level', function ($row) {
+                $class = '';
+                if ($row->level == 'user') {
+                    $class = 'btn-info';
+                } elseif ($row->level == 'vendor') {
+                    $class = 'btn-primary';
+                } else {
+                    $class = 'btn-dark';
+                }
+                return '<span class="btn ' . $class . '">' . trans('admin.' . $row->level) . '</span>';
+
+            })
             ->addColumn('operations', function ($row) {
                 $hidden_class = '';
-                if ($row->name == 'Admin') {
 
-                    $hidden_class = 'hidden';
-                }
-                $edit = '<a   class="btn btn-primary btn-sm ' . $hidden_class . ' "  href="' . route('admins.edit', $row->id) . '"><i class="la la-pencil"></i></a>';
+                $edit = '<a   class="btn btn-primary btn-sm "  href="' . route('users.edit', $row->id) . '"><i class="la la-pencil"></i></a>';
 
-                $delete = '<form  ' . $hidden_class . ' style="display: inline-block" action="' . route('admins.destroy', $row->id) . '" method="POST">
+                $delete = '<form   style="display: inline-block" action="' . route('users.destroy', $row->id) . '" method="POST">
                        ' . csrf_field() . method_field('DELETE') . '
                                  <button onclick="return confirm(\'Are You Sure !!\')" type="submit" class="  btn-sm btn btn-danger"><i class="la la-close"></i></button>
 
@@ -57,7 +80,7 @@ class AdminsController extends Controller
                 return $delete . ' ' . $edit;
 
             })
-            ->rawColumns(['operations' => 'operations', 'edit' => 'edit', 'delete' => 'delete', 'checkbox' => 'checkbox'])
+            ->rawColumns(['operations' => 'operations', 'edit' => 'edit', 'delete' => 'delete', 'checkbox' => 'checkbox', 'level' => 'level'])
             ->make(true);
 
     }//end function
@@ -71,8 +94,8 @@ class AdminsController extends Controller
     public function create()
     {
 
-        $title = 'admin.AddNew';
-        return view('admin.admins.create', compact('title'));
+        $title = 'admin.users_addNew';
+        return view('admin.users.create', compact('title'));
     }
 
     /**
@@ -87,8 +110,9 @@ class AdminsController extends Controller
 
         $data = $this->validate(request(), [
             'name' => 'required|min:5',
-            'email' => 'required|unique:admins',
-            'password' => 'required|min:5|confirmed'
+            'email' => 'required|unique:users',
+            'password' => 'required|min:5|confirmed',
+            'level' => 'required|in:user,company,vendor',
 
         ], [
             'name.min' => trans('admin.name_min'),
@@ -98,11 +122,12 @@ class AdminsController extends Controller
             'password.min' => trans('admin.password_min'),
             'password' => trans('admin.password_required'),
             'password.confirmed' => trans('admin.password_confirmed'),
+            'level.required' => trans('admin.level_required')
         ]);
         $data['password'] = bcrypt(request('password'));
-        Admin::create($data);
+        User::create($data);
         session()->flash('success', trans('admin.data_stored'));
-        return redirect(aurl('admins'));
+        return redirect(aurl('users'));
     }
 
     /**
@@ -124,9 +149,9 @@ class AdminsController extends Controller
      */
     public function edit($id)
     {
-        $admin = Admin::find($id);
+        $user = User::find($id);
         $title = 'admin.edit';
-        return view('admin.admins.edit', compact('admin', 'title'));
+        return view('admin.users.edit', compact('user', 'title'));
     }
 
     /**
@@ -138,12 +163,13 @@ class AdminsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $admin = Admin::find($id);
+        $user = User::find($id);
 
         $data = $this->validate(request(), [
             'name' => 'required|min:5',
-            'email' => 'required|unique:admins,email,' . $admin->id,
-            'password' => 'sometimes|nullable|min:5'
+            'email' => 'required|unique:users,email,' . $user->id,
+            'password' => 'sometimes|nullable|min:5',
+            'level' => 'required',
 
         ], [
             'name.min' => trans('admin.name_min'),
@@ -159,9 +185,9 @@ class AdminsController extends Controller
 
 
         }
-        $admin->update($data);
+        $user->update($data);
         session()->flash('success', trans('admin.data_updated'));
-        return redirect(aurl('admins'));
+        return redirect(aurl('users'));
     }
 
     /**
@@ -172,16 +198,10 @@ class AdminsController extends Controller
      */
     public function destroy($id)
     {
-        $admin = Admin::find($id);
-
-        if ($admin->name === 'Admin') {
-            session()->flash('danger', trans('admin.admin_cant_deleted'));
-            return redirect(aurl('admins'));
-
-        }
-        $admin->delete();
+        $user = User::find($id);
+        $user->delete();
         session()->flash('success', trans('admin.data_deleted'));
-        return redirect(aurl('admins'));
+        return redirect(aurl('users'));
 
     }
 
@@ -190,24 +210,18 @@ class AdminsController extends Controller
 
         if (is_array(\request('item'))) {
 
-            $admins = Admin::find(\request('item'))->pluck('id')->toArray();
-            if (in_array(\admin()->user()->id, $admins)) {
-
-                session()->flash('danger', trans('admin.admin_cant_deleted'));
-                return redirect()->back();
-            }
-            Admin::destroy(\request('item'));
+            User::destroy(\request('item'));
 
         } else {
-            $admin = Admin::find(\request('item'));
-            if (!$admin->name == 'admin') {
-                $admin->delete();
-            }
-            session()->flash('danger', trans('admin.admin_cant_deleted'));
+            $user = User::find(\request('item'));
+
+            $user->delete();
+
+
         }
         session()->flash('success', trans('admin.data_deleted'));
 
-        return redirect(aurl('admins'));
+        return redirect(aurl('users'));
 
     }//end function
 

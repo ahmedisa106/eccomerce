@@ -18,8 +18,6 @@ Route::group(['prefix' => 'admin-panel'], function () {
 
             return view('admin.index');
         });
-        Route::get('admins/dataTable', 'AdminsController@dataTable')->name('admins.dataTable');
-        Route::resource('admins', 'AdminsController')->except('show');
 
         Route::get('lang/{lang}', function ($lang) {
 
@@ -32,6 +30,19 @@ Route::group(['prefix' => 'admin-panel'], function () {
 
 
         });
+
+        /*start admins resource*/
+        Route::get('admins/dataTable', 'AdminsController@dataTable')->name('admins.dataTable');
+        Route::delete('admins/destroy/all', 'AdminsController@multi_delete')->name('admins.deleteAll');
+        Route::resource('admins', 'AdminsController')->except('show');
+        /*end admins*/
+
+
+        /*start users resource*/
+        Route::get('users/dataTable', 'UsersController@dataTable')->name('users.dataTable');
+        Route::delete('users/destroy/all', 'UsersController@multi_delete')->name('users.deleteAll');
+        Route::resource('users', 'UsersController')->except('show');
+        /*end user*/
 
     });
 

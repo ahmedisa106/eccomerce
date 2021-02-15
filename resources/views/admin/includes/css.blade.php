@@ -23,11 +23,22 @@
 <link href="http://fonts.cdnfonts.com/css/cairo-2" rel="stylesheet">
 
 
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/vendors/css/forms/spinner/jquery.bootstrap-touchspin.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/vendors/css/forms/icheck/icheck.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/vendors/css/forms/toggle/bootstrap-switch.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/vendors/css/forms/toggle/switchery.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/css/core/menu/menu-types/vertical-menu-modern.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/css/core/colors/palette-gradient.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/css/plugins/forms/validation/form-validation.css">
+<link rel="stylesheet" type="text/css" href="{{asset('admin/assets')}}/app-assets/css/plugins/forms/switch.css">
+
 <style>
 
-    #myTable_next, myTable_previous {
+    #myTable_next, #myTable_previous, .paginate_button {
 
         margin: 10px !important;
+
+
     }
 
 
@@ -78,3 +89,6 @@
     </style>
 @endif
 {{--End If--}}
+
+
+

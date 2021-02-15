@@ -38,7 +38,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">@lang('admin.admins')</h4>
+                            <h4 class="card-title">@lang('admin.users')</h4>
                             <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
                             <div class="heading-elements">
                                 <ul class="list-inline mb-0">
@@ -52,13 +52,23 @@
                         <div class="card-content collapse show">
                             <div class="card-header">
 
+                                <div class="form-group">
+                                    <select class="form-control" name="level" id="level">
+                                        <option value="">.......</option>
+                                        <option value="">@lang('admin.user')</option>
+                                        <option value="">@lang('admin.vendor')</option>
+                                        <option value="">@lang('admin.company')</option>
+                                    </select>
+                                </div>
+
                                 <h4 class="card-title btn btn-danger DelBtn pull-right" onclick="deleteAll()"><i class="fa fa-trash"></i> @lang('admin.delete_all')</h4>
                                 <br>
-                                <a href="{{aurl('admins/create')}}"><h4 class="card-title btn btn-success  pull-left"><i class="fa fa-plus"></i> @lang('admin.AddNew') </h4></a>
+
+                                <a href="{{aurl('users/create')}}"><h4 class="card-title btn btn-success  pull-left"><i class="fa fa-plus"></i> @lang('admin.users_addNew') </h4></a>
                             </div>
                             <div class="card-body card-dashboard">
 
-                                <form action="{{aurl('admins/destroy/all')}}" id="form_data" method="post">
+                                <form action="{{aurl('users/destroy/all')}}" id="form_data" method="post">
 
                                     {{csrf_field()}}
                                     {{method_field('DELETE')}}
@@ -71,6 +81,7 @@
                                             </th>
                                             <th>{{trans('admin.name')}}</th>
                                             <th>{{trans('admin.email')}}</th>
+                                            <th>{{trans('admin.level')}}</th>
                                             <th>{{trans('admin.operations')}}</th>
 
                                         </tr>
@@ -148,7 +159,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <!-- End Buttons for DataTAble-->
 
-
     <script>
 
         $(document).ready(function () {
@@ -166,20 +176,36 @@
                 "serverSide": true,
 
                 "ajax": {
-                    "url": "{{route('admins.dataTable')}}",
-                    "type": "GET"
+                    "url": "{{route('users.dataTable')}}",
+                    "type": "get",
+                    "data": {
+                        'level': '{{$level}}'
+                    }
+
                 },
-                "columns": [
-                    {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false, sortable: false},
-                    {data: 'name', name: name},
-                    {data: 'email', name: 'email'},
-                    {data: 'operations', name: 'operations', orderable: false, searchable: false}
-                ],
+                "columns":
+                    [
+                        {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false, sortable: false},
+                        {data: 'name', name: name},
+                        {data: 'email', name: 'email'},
+                        {data: 'level', name: 'level'},
+                        {data: 'operations', name: 'operations', orderable: false, searchable: false}
+                    ],
 
                 'language':{!! yajra_lang() !!}
 
             });
-        });
+        })
+        ;
+    </script>
+
+
+    <script type="text/javascript">
+
+        $('#level').on('change', function () {
+
+
+        })
     </script>
 
 

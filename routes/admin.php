@@ -44,6 +44,12 @@ Route::group(['prefix' => 'admin-panel'], function () {
         Route::resource('users', 'UsersController')->except('show');
         /*end user*/
 
+        /*settings*/
+        Route::get('/settings', 'SettingsController@edit')->name('settings.edit');
+        Route::put('/settings', 'SettingsController@update')->name('settings.update');
+
+        /*end settings*/
+
     });
 
 

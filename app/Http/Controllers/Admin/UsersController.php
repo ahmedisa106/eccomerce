@@ -22,7 +22,6 @@ class UsersController extends Controller
             $level = '';
         }
 
-
         $title = 'admin.admin_Panel';
         return view('admin.users.index', compact('title', 'level'));
     }
@@ -30,15 +29,12 @@ class UsersController extends Controller
 
     public function dataTable()
     {
-
-
         if (\request()->has('level') && \request('level') != '') {
             $users = User::where('level', \request('level'))->get();
         } else {
 
             $users = User::get();
         }
-
 
         return DataTables::of($users)
             ->addColumn('checkbox', function ($row) {

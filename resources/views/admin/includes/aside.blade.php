@@ -31,6 +31,11 @@
 
             </li>
 
+            <li class="nav-item" style="{{active_menu('settings')[1]}}"><a href="{{aurl('settings')}}"><i class="la la-gears"></i><span class="menu-title" data-i18n="nav.dash.main">@lang('admin.settings_edit')</span></a>
+
+
+            </li>
+
 
         </ul>
 
